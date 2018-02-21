@@ -1,4 +1,4 @@
-const assembler = require('fabricator-assemble');
+const assembler = require('refabricator-assemble');
 const browserSync = require('browser-sync');
 const csso = require('gulp-csso');
 const del = require('del');
@@ -13,6 +13,7 @@ const runSequence = require('run-sequence');
 const sass = require('gulp-sass');
 const sourcemaps = require('gulp-sourcemaps');
 const webpack = require('webpack');
+const sassGlob = require('gulp-sass-glob');
 
 // configuration
 const config = {
@@ -49,6 +50,20 @@ const config = {
       watch: 'src/assets/toolkit/images/**/*',
     },
   },
+  fonts: {
+    toolkit: {
+      src: './src/assets/toolkit/fonts/*.*',
+      dest: 'dist/assets/toolkit/fonts',
+      watch: 'src/assets/toolkit/fonts/**/*',
+    },
+  },
+  video: {
+    toolkit: {
+      src: './src/assets/toolkit/video/*.*',
+      dest: 'dist/assets/toolkit/video',
+      watch: 'src/assets/toolkit/video/**/*',
+    },
+  },
   templates: {
     watch: 'src/**/*.{html,md,json,yml}',
   },
@@ -63,30 +78,44 @@ gulp.task('clean', del.bind(null, [config.dest]));
 // styles
 gulp.task('styles:fabricator', () => {
   gulp.src(config.styles.fabricator.src)
-  .pipe(sourcemaps.init())
-  .pipe(sass().on('error', sass.logError))
-  .pipe(prefix(config.styles.browsers))
-  .pipe(gulpif(!config.dev, csso()))
-  .pipe(rename('f.css'))
-  .pipe(sourcemaps.write())
-  .pipe(gulp.dest(config.styles.fabricator.dest))
-  .pipe(gulpif(config.dev, reload({ stream: true })));
+    .pipe(sourcemaps.init())
+    .pipe(sass().on('error', sass.logError))
+    .pipe(prefix(config.styles.browsers))
+    .pipe(gulpif(!config.dev, csso()))
+    .pipe(rename('f.css'))
+    .pipe(sourcemaps.write())
+    .pipe(gulp.dest(config.styles.fabricator.dest))
+    .pipe(browserSync.stream({ match: '**/*.css' }));
 });
 
 gulp.task('styles:toolkit', () => {
   gulp.src(config.styles.toolkit.src)
-  .pipe(gulpif(config.dev, sourcemaps.init()))
-  .pipe(sass({
-    includePaths: './node_modules',
-  }).on('error', sass.logError))
-  .pipe(prefix(config.styles.browsers))
-  .pipe(gulpif(!config.dev, csso()))
-  .pipe(gulpif(config.dev, sourcemaps.write()))
-  .pipe(gulp.dest(config.styles.toolkit.dest))
-  .pipe(gulpif(config.dev, reload({ stream: true })));
+    .pipe(gulpif(config.dev, sourcemaps.init()))
+    .pipe(sassGlob())
+    .pipe(sass({
+      includePaths: './node_modules',
+    }).on('error', sass.logError))
+    .pipe(prefix(config.styles.browsers))
+    .pipe(gulpif(!config.dev, csso()))
+    .pipe(gulpif(config.dev, sourcemaps.write()))
+    .pipe(gulp.dest(config.styles.toolkit.dest))
+    .pipe(browserSync.stream({ match: '**/*.css' }));
 });
 
 gulp.task('styles', ['styles:fabricator', 'styles:toolkit']);
+
+
+// Fonts
+gulp.task('fonts', () => {
+  gulp.src(config.fonts.toolkit.src)
+    .pipe(gulp.dest(config.fonts.toolkit.dest));
+});
+
+// Video
+gulp.task('video', () => {
+  gulp.src(config.video.toolkit.src)
+    .pipe(gulp.dest(config.video.toolkit.dest));
+});
 
 
 // scripts
@@ -117,7 +146,7 @@ gulp.task('images', ['favicon'], () => {
 
 gulp.task('favicon', () => {
   return gulp.src('src/favicon.ico')
-  .pipe(gulp.dest(config.dest));
+    .pipe(gulp.dest(config.dest));
 });
 
 
@@ -154,6 +183,12 @@ gulp.task('serve', () => {
   gulp.task('images:watch', ['images'], browserSync.reload);
   gulp.watch(config.images.toolkit.watch, ['images:watch']);
 
+  gulp.task('fonts:watch', ['fonts'], browserSync.reload);
+  gulp.watch(config.fonts.toolkit.watch, ['fonts:watch']);
+
+  gulp.task('video:watch', ['video'], browserSync.reload);
+  gulp.watch(config.video.toolkit.watch, ['video:watch']);
+
 });
 
 
@@ -165,6 +200,8 @@ gulp.task('default', ['clean'], () => {
     'styles',
     'scripts',
     'images',
+    'fonts',
+    'video',
     'assembler',
   ];
 
