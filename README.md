@@ -1,11 +1,8 @@
-[![GitHub release](https://img.shields.io/github/release/fbrctr/fabricator.svg)]()
-[![Build Status](https://travis-ci.org/fbrctr/fabricator.svg)](https://travis-ci.org/fbrctr/fabricator) [![devDependency Status](https://david-dm.org/fbrctr/fabricator/dev-status.svg)](https://david-dm.org/fbrctr/fabricator#info=devDependencies) [![Join the chat at https://gitter.im/fbrctr/fabricator](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/fbrctr/fabricator?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-<p align="center">
-  <img src="http://fbrctr.github.io/assets/toolkit/images/logo.svg" width="500">
-</p>
-
 # Fabricator
+
+This is a fork of the original [Fabricator](http://fbrctr.github.io/docs) project by Luke Askew.
+
+This fork allows materials to be created as individual pages by placing html files in `src/material-blocks` directory. **Files within this directory are expected to be added to a subfolder with a material taxonomy name**: `/TAXONOMY-NAME/FILE-NAME.html`, such as `modules/form.html`.
 
 > _fabricate_ - to make by assembling parts or sections.
 
@@ -14,7 +11,7 @@ Fabricator is a tool for building website UI toolkits - _think ["Tiny Bootstraps
 ## Quick Start
 
 ```shell
-$ curl -L https://github.com/fbrctr/fabricator/archive/master.tar.gz | tar zx --strip 1
+$ curl -L https://github.com/baerkins/fabricator/archive/master.tar.gz | tar zx --strip 1
 $ npm start
 ```
 
